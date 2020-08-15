@@ -5,14 +5,12 @@
         hide-details
         prepend-icon="🔎"
         single-line
-        @input="updateSearchText"
         v-model="searchText"
       ></v-text-field>
     </v-toolbar>
-    <v-card class="host">
+    <v-card class="llamas">
       <v-list-item v-for="llama in filteredLlamas" :key="llama.id">
-        <v-btn @click="walkTheLlama(llama)">Walk this Llama</v-btn>
-        <span>{{ llama.name }}</span>
+        <v-btn @click="feedLlama(llama)">🥕 {{ llama.name }}</v-btn>
       </v-list-item>
     </v-card>
     <div class="walking-area">
@@ -22,9 +20,12 @@
           left: llamaPosition + '%',
           transform: llamaDirection === 'right' ? 'scaleX(-1)' : 'scaleX(1)',
         }"
-        >🦙</span
+        >🚶‍♂️〰🦙</span
       >
     </div>
+    <v-snackbar v-model="snackbar" color="info" :top="true">
+      {{ snackBarText }}
+    </v-snackbar>
   </div>
 </template>
 
@@ -48,13 +49,14 @@ export default defineComponent({
   },
   data() {
     return {
-      selectedLlama: undefined as undefined | Llama,
+      snackbar: false,
+      snackBarText: "",
     }
   },
   methods: {
-    walkTheLlama(llama: Llama) {
-      console.log(`Good boy, ${llama.name}. *pet* *pet*`)
-      this.selectedLlama = llama
+    feedLlama(llama: Llama) {
+      this.snackBarText = `Good boy, ${llama.name}. *pet* *pet* *feeding with carrot*`
+      this.snackbar = true
     },
   },
 })
@@ -63,6 +65,13 @@ export default defineComponent({
 <style lang="scss" scoped>
 .host {
   margin: 20px;
+  width: 50%;
+}
+
+.llamas {
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
 }
 .walking-area {
   width: 100%;
@@ -77,5 +86,6 @@ export default defineComponent({
   transform-origin: 50% 0;
   transform: scaleX(-1);
   margin-right: -25px;
+  white-space: nowrap;
 }
 </style>
