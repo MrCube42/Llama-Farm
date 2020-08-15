@@ -37,12 +37,11 @@ import {
 export default defineComponent({
   setup() {
     const llamas: Ref<Llama[]> = ref([])
+    const searchText = ref("")
 
     onMounted(async () => {
       llamas.value = await fetchLlamas()
     })
-
-    const searchText = ref("")
 
     const filteredLlamas = computed(() => {
       if (searchText.value !== "") {
@@ -54,29 +53,19 @@ export default defineComponent({
       }
     })
 
-    const updateSearchText = (userInput: string) => {
-      searchText.value = userInput
-    }
-
     return {
       searchText,
       filteredLlamas,
-      updateSearchText,
     }
   },
   data() {
     return {
-      llamas: [] as Llama[],
       selectedLlama: undefined as undefined | Llama,
       llamaPosition: 50,
     }
   },
   mounted() {
     window.addEventListener("keydown", this.handleKeydown)
-  },
-  async created() {
-    this.llamas = await fetchLlamas()
-    this.filteredLlamas = this.llamas
   },
   methods: {
     handleKeydown(key: KeyboardEvent) {
