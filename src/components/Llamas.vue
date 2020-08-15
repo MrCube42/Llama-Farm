@@ -1,11 +1,11 @@
 <template>
-  <ul>
-    <li v-for="llama in llamas" :key="llama.id">
+  <v-card class="host">
+    <v-list-item v-for="llama in llamas" :key="llama.id">
       <span>{{ llama.name }}</span>
-      <button @click="petLlama(llama)">Pet</button>
-      <button @click="feedLlama(llama)">Feed</button>
-    </li>
-  </ul>
+      <v-btn @click="petLlama(llama)">Pet</v-btn>
+      <v-btn @click="feedLlama(llama)">Feed</v-btn>
+    </v-list-item>
+  </v-card>
 </template>
 
 <script lang="ts">
@@ -35,8 +35,7 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-.li {
-  display: flex;
-  flex-direction: row;
+.host {
+  margin: 20px;
 }
 </style>

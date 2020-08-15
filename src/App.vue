@@ -1,7 +1,9 @@
 <template>
-  <div id="app">
-    <Llamas />
-  </div>
+  <v-app>
+    <v-main>
+      <Llamas />
+    </v-main>
+  </v-app>
 </template>
 
 <script lang="ts">
@@ -10,19 +12,13 @@ import Llamas from "./components/Llamas.vue"
 
 export default Vue.extend({
   name: "App",
+
   components: {
     Llamas,
   },
+
+  data: () => ({
+    //
+  }),
 })
 </script>
-
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
