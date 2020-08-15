@@ -13,8 +13,12 @@
         <span>{{ llama.name }}</span>
         <v-btn @click="petLlama(llama)">Pet</v-btn>
         <v-btn @click="feedLlama(llama)">Feed</v-btn>
+        <v-btn @click="walkTheLlama(llama)">Feed</v-btn>
       </v-list-item>
     </v-card>
+    <div class="walking-area">
+      <span class="llama" :style="{ left: llamaPosition + '%' }">🦙</span>
+    </div>
   </div>
 </template>
 
@@ -30,13 +34,29 @@ export default Vue.extend({
       llamas: [] as Llama[],
       filteredLlamas: [] as Llama[],
       searchText: "",
+      selectedLlama: undefined as undefined | Llama,
+      llamaPosition: 50,
     }
+  },
+  mounted() {
+    window.addEventListener("keydown", this.handleKeydown)
   },
   async created() {
     this.llamas = await fetchLlamas()
     this.filteredLlamas = this.llamas
   },
   methods: {
+    handleKeydown(key: KeyboardEvent) {
+      if (key.key === "ArrowLeft") {
+        if (this.llamaPosition > 0) {
+          this.llamaPosition--
+        }
+      } else if (key.key === "ArrowRight") {
+        if (this.llamaPosition < 100) {
+          this.llamaPosition++
+        }
+      }
+    },
     filterLlamas(nameToSearchFor: string) {
       this.filteredLlamas = this.llamas.filter(llama =>
         llama.name.toLowerCase().includes(nameToSearchFor.toLowerCase()),
@@ -50,6 +70,9 @@ export default Vue.extend({
     },
     feedLlama(llama: Llama) {
       console.log(`Here is a carrot for you, ${llama.name}.`)
+    },
+    walkTheLlama(llama: Llama) {
+      this.selectedLlama = llama
     },
   },
   watch: {
@@ -67,5 +90,13 @@ export default Vue.extend({
 <style lang="scss" scoped>
 .host {
   margin: 20px;
+}
+.walking-area {
+  width: 100%;
+  position: relative;
+}
+.llama {
+  position: absolute;
+  font-size: 50px;
 }
 </style>
