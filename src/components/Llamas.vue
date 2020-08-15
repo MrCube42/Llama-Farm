@@ -11,14 +11,19 @@
     </v-toolbar>
     <v-card class="host">
       <v-list-item v-for="llama in filteredLlamas" :key="llama.id">
+        <v-btn @click="walkTheLlama(llama)">Walk this Llama</v-btn>
         <span>{{ llama.name }}</span>
-        <v-btn @click="petLlama(llama)">Pet</v-btn>
-        <v-btn @click="feedLlama(llama)">Feed</v-btn>
-        <v-btn @click="walkTheLlama(llama)">Feed</v-btn>
       </v-list-item>
     </v-card>
     <div class="walking-area">
-      <span class="llama" :style="{ left: llamaPosition + '%' }">🦙</span>
+      <span
+        class="llama"
+        :style="{
+          left: llamaPosition + '%',
+          transform: llamaDirection === 'right' ? 'scaleX(-1)' : 'scaleX(1)',
+        }"
+        >🦙</span
+      >
     </div>
   </div>
 </template>
@@ -26,45 +31,29 @@
 <script lang="ts">
 import { Llama } from "./Llama"
 import { useSearchableLlamas } from "@/composables/searchable-llamas"
+import { useWalkableLlama } from "@/composables/walkable-llama"
 import { defineComponent } from "@vue/composition-api"
 
 export default defineComponent({
   setup() {
     const { searchText, filteredLlamas } = useSearchableLlamas()
+    const { llamaPosition, llamaDirection } = useWalkableLlama()
 
     return {
       searchText,
       filteredLlamas,
+      llamaPosition,
+      llamaDirection,
     }
   },
   data() {
     return {
       selectedLlama: undefined as undefined | Llama,
-      llamaPosition: 50,
     }
   },
-  mounted() {
-    window.addEventListener("keydown", this.handleKeydown)
-  },
   methods: {
-    handleKeydown(key: KeyboardEvent) {
-      if (key.key === "ArrowLeft") {
-        if (this.llamaPosition > 0) {
-          this.llamaPosition--
-        }
-      } else if (key.key === "ArrowRight") {
-        if (this.llamaPosition < 100) {
-          this.llamaPosition++
-        }
-      }
-    },
-    petLlama(llama: Llama) {
-      console.log(`Good boy, ${llama.name}. *pet* *pet*`)
-    },
-    feedLlama(llama: Llama) {
-      console.log(`Here is a carrot for you, ${llama.name}.`)
-    },
     walkTheLlama(llama: Llama) {
+      console.log(`Good boy, ${llama.name}. *pet* *pet*`)
       this.selectedLlama = llama
     },
   },
@@ -77,10 +66,16 @@ export default defineComponent({
 }
 .walking-area {
   width: 100%;
+  height: 25px;
   position: relative;
+  background: lightgreen;
 }
 .llama {
   position: absolute;
   font-size: 50px;
+  bottom: 0;
+  transform-origin: 50% 0;
+  transform: scaleX(-1);
+  margin-right: -25px;
 }
 </style>
