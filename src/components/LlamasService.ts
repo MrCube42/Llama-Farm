@@ -7,15 +7,15 @@ export async function fetchLlamas(): Promise<Llama[]> {
       name: "D'Artagnan",
     },
     {
-      id: 1,
+      id: 2,
       name: "Athos",
     },
     {
-      id: 1,
+      id: 3,
       name: "Porthos",
     },
     {
-      id: 1,
+      id: 4,
       name: "Aramis",
     },
   ]
