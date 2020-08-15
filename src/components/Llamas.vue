@@ -5,6 +5,7 @@
         hide-details
         prepend-icon="🔎"
         single-line
+        @input="updateSearchText"
         v-model="searchText"
       ></v-text-field>
     </v-toolbar>
@@ -23,17 +24,49 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue"
-
 import { Llama } from "./Llama"
 import { fetchLlamas } from "./LlamasService"
+import {
+  ref,
+  defineComponent,
+  onMounted,
+  Ref,
+  computed,
+} from "@vue/composition-api"
 
-export default Vue.extend({
+export default defineComponent({
+  setup() {
+    const llamas: Ref<Llama[]> = ref([])
+
+    onMounted(async () => {
+      llamas.value = await fetchLlamas()
+    })
+
+    const searchText = ref("")
+
+    const filteredLlamas = computed(() => {
+      if (searchText.value !== "") {
+        return llamas.value.filter(llama =>
+          llama.name.toLowerCase().includes(searchText.value.toLowerCase()),
+        )
+      } else {
+        return llamas.value
+      }
+    })
+
+    const updateSearchText = (userInput: string) => {
+      searchText.value = userInput
+    }
+
+    return {
+      searchText,
+      filteredLlamas,
+      updateSearchText,
+    }
+  },
   data() {
     return {
       llamas: [] as Llama[],
-      filteredLlamas: [] as Llama[],
-      searchText: "",
       selectedLlama: undefined as undefined | Llama,
       llamaPosition: 50,
     }
@@ -57,14 +90,6 @@ export default Vue.extend({
         }
       }
     },
-    filterLlamas(nameToSearchFor: string) {
-      this.filteredLlamas = this.llamas.filter(llama =>
-        llama.name.toLowerCase().includes(nameToSearchFor.toLowerCase()),
-      )
-    },
-    clearFilter() {
-      this.filteredLlamas = this.llamas
-    },
     petLlama(llama: Llama) {
       console.log(`Good boy, ${llama.name}. *pet* *pet*`)
     },
@@ -73,15 +98,6 @@ export default Vue.extend({
     },
     walkTheLlama(llama: Llama) {
       this.selectedLlama = llama
-    },
-  },
-  watch: {
-    searchText: function(userInput: string) {
-      if (userInput !== "") {
-        this.filterLlamas(userInput)
-      } else {
-        this.clearFilter()
-      }
     },
   },
 })
