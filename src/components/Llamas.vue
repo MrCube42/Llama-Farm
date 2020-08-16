@@ -79,7 +79,6 @@ export default defineComponent({
   data() {
     return {
       llamas: [] as Llama[],
-      searchText: "",
       snackbar: false,
       snackBarText: "",
       selectedLlama: undefined as undefined | Llama,
@@ -87,20 +86,8 @@ export default defineComponent({
       llamaDirection: "left" as "left" | "right",
     }
   },
-  computed: {
-    filteredLlamas(): Llama[] {
-      if (this.searchText !== "") {
-        return this.llamas.filter(llama =>
-          llama.name.toLowerCase().includes(this.searchText.toLowerCase()),
-        )
-      } else {
-        return this.llamas
-      }
-    },
-  },
   async mounted() {
     window.addEventListener("keydown", this.handleKeydown)
-    this.llamas = await fetchLlamas()
   },
   beforeDestroy() {
     window.removeEventListener("keydown", this.handleKeydown)
