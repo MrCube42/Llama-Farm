@@ -1,18 +1,24 @@
 import { onMounted, onUnmounted, ref } from "@vue/composition-api"
 
-export function useWalkableLlama() {
-  const llamaPosition = ref(50)
+export function useWalkableLlama(props: {
+  availableWidth: number
+  initialPosition?: number
+}) {
+  const { availableWidth } = props
+  const initialPosition = props.initialPosition ?? availableWidth / 2
+  const stepSize = availableWidth / 100
+  const llamaPosition = ref(initialPosition)
   const llamaDirection = ref("left")
 
   const handleKeydown = (event: KeyboardEvent) => {
     if (event.key === "ArrowLeft") {
       if (llamaPosition.value > 0) {
-        llamaPosition.value--
+        llamaPosition.value -= stepSize
         llamaDirection.value = "left"
       }
     } else if (event.key === "ArrowRight") {
-      if (llamaPosition.value < 100) {
-        llamaPosition.value++
+      if (llamaPosition.value < availableWidth) {
+        llamaPosition.value += stepSize
         llamaDirection.value = "right"
       }
     }

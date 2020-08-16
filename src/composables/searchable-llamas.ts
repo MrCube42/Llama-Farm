@@ -1,14 +1,9 @@
 import { Llama } from "@/components/Llama"
-import { fetchLlamas } from "@/components/LlamasService"
-import { computed, onMounted, Ref, ref } from "@vue/composition-api"
+import { computed, ref, Ref } from "@vue/composition-api"
 
-export function useSearchableLlamas() {
-  const llamas: Ref<Llama[]> = ref([])
+export function useSearchableLlamas(props: { llamas: Ref<Llama[]> }) {
+  const { llamas } = props
   const searchText = ref("")
-
-  onMounted(async () => {
-    llamas.value = await fetchLlamas()
-  })
 
   const filteredLlamas = computed(() => {
     if (searchText.value !== "") {
