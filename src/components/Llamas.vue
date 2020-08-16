@@ -41,8 +41,9 @@
 </template>
 
 <script lang="ts">
-import { Llama } from "./Llama"
 import Vue from "vue"
+
+import { Llama } from "./Llama"
 import { fetchLlamas } from "./LlamasService"
 
 export default Vue.extend({
@@ -69,8 +70,8 @@ export default Vue.extend({
     },
   },
   async mounted() {
-    this.llamas = await fetchLlamas()
     window.addEventListener("keydown", this.handleKeydown)
+    this.llamas = await fetchLlamas()
   },
   beforeDestroy() {
     window.removeEventListener("keydown", this.handleKeydown)
