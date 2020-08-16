@@ -42,40 +42,59 @@
 
 <script lang="ts">
 import { Llama } from "./Llama"
-import {
-  useSearchableLlamas,
-  useWalkableLlama,
-  useLlamasService,
-} from "@/composables"
-import { defineComponent } from "@vue/composition-api"
+import Vue from "vue"
+import { fetchLlamas } from "./LlamasService"
 
-export default defineComponent({
-  setup() {
-    const { llamas } = useLlamasService()
-    const { searchText, filteredLlamas } = useSearchableLlamas({ llamas })
-    const { llamaPosition, llamaDirection } = useWalkableLlama({
-      availableWidth: 620,
-    })
-
-    return {
-      searchText,
-      filteredLlamas,
-      llamaPosition,
-      llamaDirection,
-    }
-  },
+export default Vue.extend({
   data() {
     return {
+      llamas: [] as Llama[],
+      searchText: "",
       snackbar: false,
       snackBarText: "",
       selectedLlama: undefined as undefined | Llama,
+      llamaPosition: 0,
+      llamaDirection: "left" as "left" | "right",
     }
+  },
+  computed: {
+    filteredLlamas(): Llama[] {
+      if (this.searchText !== "") {
+        return this.llamas.filter(llama =>
+          llama.name.toLowerCase().includes(this.searchText.toLowerCase()),
+        )
+      } else {
+        return this.llamas
+      }
+    },
+  },
+  async mounted() {
+    this.llamas = await fetchLlamas()
+    window.addEventListener("keydown", this.handleKeydown)
+  },
+  beforeDestroy() {
+    window.removeEventListener("keydown", this.handleKeydown)
   },
   methods: {
     walkTheLlama(llama: Llama) {
       this.snackBarText = `Good boy, ${llama.name}. *pet* *pet* *feeding with carrot*`
       this.snackbar = true
       this.selectedLlama = llama
+    },
+    handleKeydown(event: KeyboardEvent) {
+      const availableWidth = 620
+      const stepSize = availableWidth / 100
+      if (event.key === "ArrowLeft") {
+        if (this.llamaPosition > 0) {
+          this.llamaPosition -= stepSize
+          this.llamaDirection = "left"
+        }
+      } else if (event.key === "ArrowRight") {
+        if (this.llamaPosition < availableWidth) {
+          this.llamaPosition += stepSize
+          this.llamaDirection = "right"
+        }
+      }
     },
   },
 })
